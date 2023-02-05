@@ -1,6 +1,7 @@
 import logging
 import azure.functions as func
 from Utilities.QueryDb import QueryData;
+import json
 
 
 
@@ -8,7 +9,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Azure Function triggered for DimOrg')
 
     try:
-        jsonResponse = QueryData('[dbo].[DimORG]')
+        req_body = req.get_json()
+        dict=json.loads(req.get_body())
+        jsonResponse = QueryData('[dbo].[DimORG]', dict)
         logging.info('Returning json response')
         return func.HttpResponse(jsonResponse)
     

@@ -1,10 +1,11 @@
 from Utilities.Conn import GetConnection;
 import json;
 
-def QueryData(tableName):
+def QueryData(tableName, dict):
     conn = GetConnection()
     cursor = conn.cursor()
-    query = 'SELECT * FROM ' + tableName
+    where = GenerateWhere(dict)
+    query = 'SELECT * FROM ' + tableName + ' ' + where
     cursor.execute(query)
     rows = cursor.fetchall()
     data = []
@@ -12,3 +13,16 @@ def QueryData(tableName):
         data.append(list(row))
     jsonResponse = json.dumps(data, default=str)
     return jsonResponse
+
+
+def GenerateWhere(dict):
+    where = 'WHERE '
+    for key in dict.keys():
+        if(where != 'WHERE '):
+            where = where + ' AND '
+        where  = where + key + "='" + dict[key] + "'"
+    
+    if(where == 'WHERE '):
+        return ''
+    
+    return where
